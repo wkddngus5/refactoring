@@ -46,4 +46,4 @@ function statement(invoice, plays) {
   return result;
 }
 
-console.log(statement(invoces[0], plays));
+statement(invoces[0], plays);
