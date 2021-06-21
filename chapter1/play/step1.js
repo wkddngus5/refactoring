@@ -2,12 +2,16 @@ const plays = require('./plays.json');
 const invoces = require('./invoces.json');
 
 function statement(invoice, plays) {
-  const statementData = {};
-  statementData.customer = invoice.customer;
-  statementData.performances = invoice.performances.map(enrichPerformance);
-  statementData.totalAmount = totalAmount(statementData);
-  statementData.totalVolumeCredits = totalVolumeCredits(statementData);
-  return renderPlainText(statementData, plays);  
+  return renderPlainText(createStatementData(invoice, plays));  
+
+  function createStatementData() {
+    const statementData = {};
+    statementData.customer = invoice.customer;
+    statementData.performances = invoice.performances.map(enrichPerformance);
+    statementData.totalAmount = totalAmount(statementData);
+    statementData.totalVolumeCredits = totalVolumeCredits(statementData);
+    return statementData;
+  }
 
   function enrichPerformance(aPerformance) {
     const result = Object.assign({}, aPerformance);
@@ -55,20 +59,11 @@ function statement(invoice, plays) {
   }
 
   function totalAmount(data) {
-    let result = 0;
-    for (let perf of data.performances) {
-      result += amountFor(perf);
-    }
-    return result;
+    return data.performances.reduce((total, p) => total + p.amount, 0);
   }
 
   function totalVolumeCredits(data) {
-    let volumeCredits = 0;
-    for (let perf of data.performances) {
-      // 포인트를 적립한다.
-      volumeCredits += volumeCreditsFor(perf);
-    }
-    return volumeCredits;
+    return data.performances.reduce((total, p) => total + p.amount, 0);
   }
 
   function renderPlainText(data) {
