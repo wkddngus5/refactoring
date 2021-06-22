@@ -74,4 +74,3 @@ function statement(invoice, plays) {
 }
 
 console.log(statement(invoces[0], plays));
-
