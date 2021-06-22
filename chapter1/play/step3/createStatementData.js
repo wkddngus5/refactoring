@@ -1,4 +1,5 @@
-const PerformanceCalculator = require('./PerformanceCalculator');
+const TragedyCalculator = require('./TragedyCalculator');
+const ComedyCalculator = require('./ComedyCalculator');
 
 function createStatementData(invoice, plays) {
   const statementData = {};
@@ -9,7 +10,7 @@ function createStatementData(invoice, plays) {
   return statementData;
 
   function enrichPerformance(aPerformance) {
-    const performanceCalculator = new PerformanceCalculator(aPerformance, playFor(aPerformance));
+    const performanceCalculator = createPerformanceCalculator(aPerformance, playFor(aPerformance));
     const result = Object.assign({}, aPerformance);
     result.play = performanceCalculator.play;
     result.amount = performanceCalculator.amount;
@@ -29,6 +30,16 @@ function createStatementData(invoice, plays) {
   function totalVolumeCredits(data) {
     return data.performances.reduce((total, p) => total + p.amount, 0);
   }
+}
+
+function createPerformanceCalculator(aPerformance, aPlay) {
+  switch (aPlay.type) {
+    case 'tragedy': return new TragedyCalculator(aPerformance, aPlay);
+    case 'comedy': return new ComedyCalculator(aPerformance, aPlay);
+    default: 
+      throw new Error(`알 수 없는 장르: ${aPlay.type}`);
+  }
+  return new PerformanceCalculator(aPerformance, aPlay);
 }
 
 module.exports = createStatementData;
